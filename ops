@@ -1,1 +1,1 @@
-{"author":{"id":"9cbc4ca4b41b90b940feab6bbcc12af1f966ec8382354a7461debacf23c30edf"},"ops":[{"type":1,"timestamp":1756664911,"nonce":"B5/lJ/K+dnMTGCKoSaC561xMP98=","title":"refactor new and edit so edit. \"","message":"","files":null}]}
+{"author":{"id":"9cbc4ca4b41b90b940feab6bbcc12af1f966ec8382354a7461debacf23c30edf"},"ops":[{"type":2,"timestamp":1756665561,"nonce":"kPvVb8BQ5XVYA3KIW+C11Hthm5g=","title":"refactor new and edit so edit can reuse temp buffer of new","was":"refactor new and edit so edit. \""}]}
