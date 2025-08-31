@@ -1,0 +1,52 @@
+* git-bug elisp functions for emacs
+Herein is a minimal interface to git-bug for emacs.
+
+
+Likely the most novel feature is =M-x git-bug-new-from-line=. This function will create a new git-bug and transform a line like
+#+begin_src
+# TODO: a commented note for later in the source code
+#+end_src
+to
+#+begin_src
+# TODO(gb#abcd123): a commented note for later in the source code
+#+end_src
+
+** Highlights
+#+begin_src elisp :exports results :output results table
+  ;; (load-file "git-bug.el")
+  (defun doc-one-line (func) (replace-regexp-in-string "\n.*" "" (documentation func)))
+  (setq doclist
+        '(git-bug-menu
+          git-bug-new-from-line
+          git-bug-edit-at-line
+          git-bug-ls
+          ))
+  (mapcar (lambda (func)
+            (format "=%s=|%s\n"
+                    (symbol-name func)
+                    (doc-one-line func)))
+          doclist)
+#+end_src
+
+#+RESULTS:
+| =git-bug-menu=          | Choose a bug and than action each from a list.       |
+| =git-bug-new-from-line= | Create a bug from TODO/FIX/BUG: on the current line. |
+| =git-bug-edit-at-line=  | Edit first match of gb#1234567 on the current line.  |
+| =git-bug-ls=            | Create a git-bug ls buffer.                          |
+
+*** git-bug-menu actions
+From  ~git-bug-menu-actions-alist~
+#+begin_src elisp :exports results :output results table
+  (mapcar (lambda (kv)
+            (format "=%s=|%s\n"
+                    (car kv)
+                    (doc-one-line (cdr kv))))
+          git-bug-menu-actions-alist)
+#+end_src
+
+#+RESULTS:
+| =show=   | Create a new buffer to show this ‘bugid‘’s title and it’s comments. |
+| =edit=   | Edit bug ‘BUGID‘ in temporary buffer.                               |
+| =insert= | Insert gb# issue number at current position in buffer.              |
+| =close=  | Close issue.                                                        |
+| =open=   | Reopen issue.                                                       |
