@@ -2,6 +2,7 @@
 * git-bug elisp functions for emacs
 A minimal interface to [[https://github.com/git-bug/][git-bug]] for emacs.
 
+This package provides a =completing-read= menu to match existing bugs and another menu to act on a bug.
 
 Likely the most novel[fn:1] feature is =M-x git-bug-new-from-line=. This function will create a new git-bug from a line like
 #+begin_src
@@ -48,14 +49,17 @@ From  ~git-bug-menu-actions-alist~
 #+end_src
 
 #+RESULTS:
-| =show=   | Create a new buffer to show this ‘bugid‘’s title and it’s comments. |
-| =edit=   | Edit bug ‘BUGID‘ in temporary buffer.                               |
-| =insert= | Insert gb# issue number at current position in buffer.              |
-| =close=  | Close issue.                                                        |
-| =open=   | Reopen issue.                                                       |
+| =show=    | Create a new buffer to show this ‘bugid‘’s title and it’s comments. |
+| =edit=    | Edit bug ‘BUGID‘ in temporary buffer.                               |
+| =insert=  | Insert gb# issue number at current position in buffer.              |
+| =close=   | Close issue.                                                        |
+| =comment= | Create a new comment for bug ‘BUGID‘ in via EDITOR.                 |
+| =open=    | Reopen issue.                                                       |
+| =rm=      | Remove issue.                                                       |
 
 ** Setup
-With =use-package-quelpa=
+
+Here's an example install and configure for =~/.emacs.d/init.el= using =use-package-vc-install= (Emacs 30)
 #+begin_src elisp :eval never
 (use-package git-bug
   :vc (:url "https://github.com/WillForan/emacs-git-bug")
@@ -67,6 +71,12 @@ With =use-package-quelpa=
   (evil-leader/set-key "#" #'git-bug-menu)
   (evil-leader/set-key "3" #'git-new-from-line))
 #+end_src
+
+** Kludge
+
+=git-bug-edit-bug= and =git-bug-comment-new= use ~git-bug~'s built in edit-from-cli setup (gb#cc5fa60). This works well in emacs if
+  1. emacs is launched like =emacs --daemon= or you've run =server-start= from within
+  2. =EDITOR= on system environment has been set to e.g. ~emacsclient -c~
 
 * See also
  * [[https://github.com/alphapapa/magit-todos][magit-todos]] =magit-todo-list=

@@ -83,6 +83,14 @@ TODO(gb#cc5fa60): refactor new and edit so edit can reuse temp buffer"
                  nil
                  "git-bug" "bug" "title" "edit" bugid))
 
+(defun git-bug-comment-new (bugid)
+  "Create a new comment for bug `BUGID` in via EDITOR.
+Like `git-bug-edit-bug` creates a new process that works best if
+  emacs-server is running and EDITOR=emacsclinet (gb#cc5fa60)"
+  (start-process (format "git-bug-comment:%s" bugid)
+                 nil
+                 "git-bug" "bug" "comment" "new" bugid))
+
 (defun git-bug-edit-at-line ()
   "Edit first match of gb#1234567 on the current line."
   (interactive)
@@ -100,11 +108,13 @@ Runs e.g. `git-bug bug status open $bugid`."
 
 (defvar git-bug-menu-actions-alist
   '(;; ("test" . (lambda (bid) (message "selected: %s" bid)))
-    ("show" . git-bug-show-bug)
-    ("edit" . git-bug-edit-bug)
+    ("show"   . git-bug-show-bug)
+    ("edit"   . git-bug-edit-bug)
     ("insert" . git-bug-insert-bugid)
-    ("close". (lambda (bugid) "Close issue." (git-bug-cmd bugid "status close" )))
-    ("open" . (lambda (bugid) "Reopen issue." (git-bug-cmd bugid "status open"))))
+    ("close"  . (lambda (bugid) "Close issue." (git-bug-cmd bugid "status close" )))
+    ("comment". git-bug-comment-new)
+    ("open"   . (lambda (bugid) "Reopen issue." (git-bug-cmd bugid "status open")))
+    ("rm"   . (lambda (bugid) "Remove issue." (git-bug-cmd bugid "rm"))))
  "Bug actions preformed when given a `BUGID`.")
 
 (defun git-bug-menu (&optional bugid action)
@@ -207,6 +217,7 @@ Abuse `git-bug-editmsg-new` and `git-bug-editmsg-save-and-close` as hidden buffe
 
 
 ;;; TODOs
+;; TODO(gb#e3a1092): record demo
 ;; TODO(gb#e7a8b7c): edit message color like commit-message
 ;; TODO(gb#94e034c): git-bug porcelain for magit-forge
 ;; TODO(gb#6588bc5): list of git-bug project directories for 'overview of all' page
