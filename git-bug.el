@@ -28,7 +28,7 @@
   ;; TODO: make 'gb#' prefix a package customize variable
   (save-excursion
            (move-beginning-of-line 1)
-           (search-forward "gb#" (point-at-eol) t)
+           (search-forward "gb#" (pos-eol) t)
            (thing-at-point 'word t)))
 
 (defun git-bug-completing-read ()
@@ -160,7 +160,7 @@ Hook removes file when buffer is killed."
     ;; pretend to be where we came from so git commands work
     (setq-local default-directory cur-dir)
 
-    (goto-char (point-at-eol))
+    (goto-char (pos-eol))
     (insert "\n\n# C-C C-c to save bug; C-C C-k to discard.")
     (goto-char (point-min))
     (git-bug-editmsg-mode 1)
@@ -187,11 +187,11 @@ Abuse `git-bug-editmsg-new` and `git-bug-editmsg-save-and-close` as hidden buffe
   (interactive)
   (save-excursion
     (move-beginning-of-line 1)
-    (search-forward-regexp "TODO:\\|FIX:\\|BUG:\\|HACK:\\|XXX:" (point-at-eol) t)
+    (search-forward-regexp "TODO:\\|FIX:\\|BUG:\\|HACK:\\|XXX:" (pos-eol) t)
     (let ((label-point (point)))
       (if (= label-point (point-at-bol))
           (error "No label like TODO FIX or BUG found."))
-      (let* ((bug-title (string-trim (buffer-substring-no-properties label-point (point-at-eol))))
+      (let* ((bug-title (string-trim (buffer-substring-no-properties label-point (pos-eol))))
              ;; TODO(gb#59e13c7): git-bug-new-from-line should include file:line when creating
              (bugid
               (save-current-buffer
