@@ -1,6 +1,6 @@
 #+OPTIONS: toc:nil
 * git-bug elisp functions for emacs
-A minimal interface to git-bug for emacs.
+A minimal interface to [[https://github.com/git-bug/][git-bug]] for emacs.
 
 
 Likely the most novel[fn:1] feature is =M-x git-bug-new-from-line=. This function will create a new git-bug from a line like
@@ -54,14 +54,57 @@ From  ~git-bug-menu-actions-alist~
 | =close=  | Close issue.                                                        |
 | =open=   | Reopen issue.                                                       |
 
-** See also
+** Setup
+With =use-package-quelpa=
+#+begin_src elisp :eval never
+(use-package git-bug
+  :vc (:url "https://github.com/WillForan/emacs-git-bug")
+  :ensure t
+  :bind
+  ("C-c b m" . git-bug-menu)
+  ("C-c b c" . git-bug-new-from-line)
+  :config
+  (evil-leader/set-key "#" #'git-bug-menu)
+  (evil-leader/set-key "3" #'git-new-from-line))
+#+end_src
+
+* See also
  * [[https://github.com/alphapapa/magit-todos][magit-todos]] =magit-todo-list=
  * [[https://github.com/tarsius/hl-todo][hl-todo]] =hl-todo-rgrep=
  * [[https://github.com/magit/forge][magit/forge]]'s [[https://magit.vc/manual/forge/Creating-Topics-and-Posts.html]["topics and posts"]] =forge-list-topics=
  * [[https://code.visualstudio.com/blogs/2020/05/06/github-issues-integration#_creating-an-issue-from-anywhere][visual studio code's github-issue-integration]]
-
+ * [[https://github.com/git-bug/][git-bug]] alternatives/similiar projects
+   * Radicle's [[https://radicle.xyz/guides/user#working-with-issues][Collaborative OBject (COB) issues]]
+   * [[https://github.com/aaiyer/bugseverywhere][bugs everywhere]] (via [[https://codeberg.org/forgejo/forgejo/issues/2629][forgejo discussion]])
+   * [[https://f3.forgefriends.org/][Friendly Forge Format]] ([[https://code.forgejo.org/f3][forgejo/f3]]; JSON schema) (cf. [[https://forgefed.org/][forgefed]] activitypub)
 
 * git-bug
+
+** Initial Setup
+Getting started with =git-bug= can be tricky ([[https://github.com/git-bug/git-bug/issues/1331][git-bug#1331]]), especially pointing to ssh keys ([[https://github.com/git-bug/git-bug/issues/1023][git-bug#1023]]) and initializing an identity (=git bug user new=).
+
+Those can both be accomplished like
+#+begin_src bash :eval never
+# ssh-agent git identity for pushing (cf. gpg-agent)
+if [ -z "$SSH_AUTH_SOCK" ]; then
+  eval $(ssh-agent -s)
+  ssh-add ~/.ssh/id_ed25519
+fi
+
+# $PWD/.git/config [git-bug] 'identity' section.
+# implicit defaults made explicit, plus gravatar
+git_email=$(git config get user.email)
+avatar_url=https://www.gravatar.com/avatar/$(tr -d '\n' <<<  ${git_email,,} | sha256sum | cut -f1 -d' ')
+git config get git-bug.identity ||
+  git bug user new \
+    -n "$(git config get user.name)"\
+    -e "$git_email" \
+    -a "$avatar_url"
+#+end_src
+
+
+* Current Issues
+Putting the issues here for fun. Fun that costs an easily out of date and/or high-churn readme.
 
 #+begin_src bash :colnames '(date bug title) :exports both
   git-bug bug -s open -f json |
