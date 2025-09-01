@@ -1,1 +1,1 @@
-{"author":{"id":"9cbc4ca4b41b90b940feab6bbcc12af1f966ec8382354a7461debacf23c30edf"},"ops":[{"type":4,"timestamp":1756728240,"nonce":"kYDnNsK1P5/3Do4Sewoakhyz/BE=","status":2}]}
+{"author":{"id":"9cbc4ca4b41b90b940feab6bbcc12af1f966ec8382354a7461debacf23c30edf"},"ops":[{"type":8,"timestamp":1756751303,"nonce":"JnEwrTKq6s4YivYhtHLAFuKclVg=","target":"c6795b5c5cbe7aea673c5a8236f5c180ed31dfd26994e06b9855eca78c9ee348","new_metadata":{"github-id":"I_kwDOPnfSrM7JE4hH","github-url":"https://github.com/WillForan/emacs-git-bug/issues/3"}}]}
