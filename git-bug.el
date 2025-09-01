@@ -53,7 +53,7 @@ Give `BUGID` and/or `TITLE` to avoid calling git-bug."
   )
 
 (defun git-bug-ls ()
-  "Create a git-bug ls buffer."
+  "Use `git bug`'s built-in `org-mode` format to display all bugs."
   (interactive)
   (with-current-buffer (get-buffer-create "git-bug.org")
     (erase-buffer)
@@ -68,6 +68,8 @@ Give `BUGID` and/or `TITLE` to avoid calling git-bug."
   (when (not bugid) (setq bugid (git-bug-completing-read)))
   (with-current-buffer (get-buffer-create (format "gb#%s" bugid))
     (erase-buffer)
+    (insert (shell-command-to-string
+             (format "git-bug bug title \"%s\"" bugid)))
     (insert (shell-command-to-string
              (format "git-bug bug comment \"%s\"" bugid)))
     (goto-char (point-min))
@@ -89,17 +91,12 @@ TODO(gb#cc5fa60): refactor new and edit so edit can reuse temp buffer"
       (git-bug-edit-bug bugid)
     (error "No bug like gh#1234567 on line")))
 
-(defun git-bug-new-bug (&optional title message no-edit)
-  "Create a new bug using a temporary buffer.  Insert optional `TITLE` and `MESSAGE` when given."
-  (error "not implemented. See git-bug-editmsg-new")
-  ;; TODO: create temp buffer and hooks
-  (if no-edit (insert (format "%s\n\n%s" title message)))
-  (shell-command-to-string (format "git-bug bug new -F \"%s\"" tempfile)))
-
 (defun git-bug-cmd (bugid cmd)
   "Apply `CMD` to `BUGID`.
 Runs e.g. `git-bug bug status open $bugid`."
-  (shell-command-to-string (format "git-bug bug %s \"%s\"" cmd bugid)))
+  (let ((cmd (format "git-bug bug %s \"%s\"" cmd bugid)))
+    ;(message "running '%s'" cmd)
+    (shell-command-to-string cmd)))
 
 (defvar git-bug-menu-actions-alist
   '(;; ("test" . (lambda (bid) (message "selected: %s" bid)))
@@ -117,7 +114,7 @@ Runs `ACTION` (in `git-bug-menu-actions-alist`) on `BUGID` (`git-bug bug -f json
   (interactive)
   (when (not bugid) (setq bugid (git-bug-completing-read)))
   (when (not bugid) (error "failed to select a bug id"))
-  ;; TODO(gb#7b002ae): need to exit and return when bug is saved. also regexp is wrong?
+  ;; TODO(gb#7b002ae): bug-menu to exit and return when bug is saved. also regexp is wrong?
   ;; (when (not (string-match "^[A-Za-z0-9]{9}$" bugid))
   ;;            (setq bugid (git-bug-editmsg-new bugid)))
   (when (not action)
@@ -190,11 +187,12 @@ Abuse `git-bug-editmsg-new` and `git-bug-editmsg-save-and-close` as hidden buffe
   (interactive)
   (save-excursion
     (move-beginning-of-line 1)
-    (search-forward-regexp "TODO:\\|FIX:\\|BUG:" (point-at-eol) t)
+    (search-forward-regexp "TODO:\\|FIX:\\|BUG:\\|HACK:\\|XXX:" (point-at-eol) t)
     (let ((label-point (point)))
       (if (= label-point (point-at-bol))
           (error "No label like TODO FIX or BUG found."))
       (let* ((bug-title (string-trim (buffer-substring-no-properties label-point (point-at-eol))))
+             ;; TODO(gb#59e13c7): git-bug-new-from-line should include file:line when creating
              (bugid
               (save-current-buffer
                 (git-bug-editmsg-new bug-title)
@@ -209,11 +207,10 @@ Abuse `git-bug-editmsg-new` and `git-bug-editmsg-save-and-close` as hidden buffe
 
 
 ;;; TODOs
-;; TODO(: quick line to bug from TODO FIX BUG
 ;; TODO(gb#e7a8b7c): edit message color like commit-message
 ;; TODO(gb#94e034c): git-bug porcelain for magit-forge
-;; TODO(gb#6588bc5): list of git-bug project directories for overview of all page
-;; TODO(gb#3a93c2e): minor-mode for clickable buttons, company/cornfu completion? (adjust
+;; TODO(gb#6588bc5): list of git-bug project directories for 'overview of all' page
+;; TODO(gb#3a93c2e): minor-mode for clickable buttons, company/cornfu completion?
 
 (provide git-bug)
 ;; git-bug.el ends here
