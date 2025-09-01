@@ -75,8 +75,10 @@ With =use-package-quelpa=
  * [[https://code.visualstudio.com/blogs/2020/05/06/github-issues-integration#_creating-an-issue-from-anywhere][visual studio code's github-issue-integration]]
  * [[https://github.com/git-bug/][git-bug]] alternatives/similiar projects
    * Radicle's [[https://radicle.xyz/guides/user#working-with-issues][Collaborative OBject (COB) issues]]
-   * [[https://github.com/aaiyer/bugseverywhere][bugs everywhere]] (via [[https://codeberg.org/forgejo/forgejo/issues/2629][forgejo discussion]])
-   * [[https://f3.forgefriends.org/][Friendly Forge Format]] ([[https://code.forgejo.org/f3][forgejo/f3]]; JSON schema) (cf. [[https://forgefed.org/][forgefed]] activitypub)
+   * [[https://gitlab.com/bugseverywhere/bugseverywhere][bugs everywhere]] (via [[https://codeberg.org/forgejo/forgejo/issues/2629][forgejo discussion]])
+   * [[https://fossil-scm.org/][fossil]] has issue tracking built-in (as well as a wiki, forum, chat)
+   * [[https://f3.forgefriends.org/][Friendly Forge Format]] ([[https://code.forgejo.org/f3][forgejo/f3]]; JSON schema) (cf. [[https://forgefed.org/][forgefed]] activitypub; [[https://blog.liw.fi/posts/bug-exchange-format/][XML bug exchange format]] c. 2009)
+   * other lists: [[https://dist-bugs.branchable.com/software/][dist-bugs]], [[https://en.wikipedia.org/wiki/Template:Bug_tracking_systems][wikipedia/Bug_tracking_systems]]
 
 * git-bug
 
