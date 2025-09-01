@@ -1,15 +1,18 @@
+#+OPTIONS: toc:nil
 * git-bug elisp functions for emacs
-Herein is a minimal interface to git-bug for emacs.
+A minimal interface to git-bug for emacs.
 
 
-Likely the most novel feature is =M-x git-bug-new-from-line=. This function will create a new git-bug and transform a line like
+Likely the most novel[fn:1] feature is =M-x git-bug-new-from-line=. This function will create a new git-bug from a line like
 #+begin_src
 # TODO: a commented note for later in the source code
 #+end_src
-to
+and then add the bug reference to the line, so the outcome of running the function is an updated line like
 #+begin_src
 # TODO(gb#abcd123): a commented note for later in the source code
 #+end_src
+
+[fn:1] [[https://code.visualstudio.com/blogs/2020/05/06/github-issues-integration#_creating-an-issue-from-anywhere][VS code's github-issue-integration]] also does similiar. Are there other implementations?
 
 ** Highlights
 #+begin_src elisp :exports results :output results table
@@ -29,10 +32,10 @@ to
 #+end_src
 
 #+RESULTS:
-| =git-bug-menu=          | Choose a bug and than action each from a list.       |
-| =git-bug-new-from-line= | Create a bug from TODO/FIX/BUG: on the current line. |
-| =git-bug-edit-at-line=  | Edit first match of gb#1234567 on the current line.  |
-| =git-bug-ls=            | Create a git-bug ls buffer.                          |
+| =git-bug-menu=          | Choose a bug and than action each from a list.                  |
+| =git-bug-new-from-line= | Create a bug from TODO/FIX/BUG: on the current line.            |
+| =git-bug-edit-at-line=  | Edit first match of gb#1234567 on the current line.             |
+| =git-bug-ls=            | Use ‘git bug‘’s built-in ‘org-mode‘ format to display all bugs. |
 
 *** git-bug-menu actions
 From  ~git-bug-menu-actions-alist~
@@ -50,3 +53,30 @@ From  ~git-bug-menu-actions-alist~
 | =insert= | Insert gb# issue number at current position in buffer.              |
 | =close=  | Close issue.                                                        |
 | =open=   | Reopen issue.                                                       |
+
+** See also
+ * [[https://github.com/alphapapa/magit-todos][magit-todos]] =magit-todo-list=
+ * [[https://github.com/tarsius/hl-todo][hl-todo]] =hl-todo-rgrep=
+ * [[https://github.com/magit/forge][magit/forge]]'s [[https://magit.vc/manual/forge/Creating-Topics-and-Posts.html]["topics and posts"]] =forge-list-topics=
+ * [[https://code.visualstudio.com/blogs/2020/05/06/github-issues-integration#_creating-an-issue-from-anywhere][visual studio code's github-issue-integration]]
+
+
+* git-bug
+
+#+begin_src bash :colnames '(date bug title) :exports both
+  git-bug bug -s open -f json |
+   jq -r '.[]|[.edit_time.time[0:10], .id[0:7], .title]|@tsv' |
+   sort -nr
+#+end_src
+
+#+RESULTS:
+|       date | bug     | title                                                            |
+|------------+---------+------------------------------------------------------------------|
+| 2025-09-01 | 59e13c7 | git-bug-new-from-line should include file:line when creating     |
+| 2025-09-01 | 3a93c2e | minor-mode for clickable buttons, company/cornfu completion?     |
+| 2025-08-31 | cc5fa60 | refactor new and edit so edit can reuse temp buffer of new       |
+| 2025-08-31 | 7b002ae | need to exit and return when bug is saved. also regexp is wrong? |
+| 2025-08-30 | e7a8b7c | edit message color like commit-message                           |
+| 2025-08-30 | 94e034c | git-bug porcelain for magit-forge                                |
+| 2025-08-30 | 6588bc5 | list of git-bug project directories for overview of all page     |
+| 2025-08-30 | 4ccdfd4 | edit message color like commit-message                           |
