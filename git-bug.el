@@ -1,4 +1,4 @@
-;;; package --- git-bug
+;;; package --- git-bug -*- lexical-binding: t; -*-
 ;;; Commentary:
 ;; This file packages shell wrappers and convenience functions for git-bug.
 ;;; Code:
