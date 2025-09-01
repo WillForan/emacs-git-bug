@@ -106,8 +106,8 @@ Runs e.g. `git-bug bug status open $bugid`."
     ("show" . git-bug-show-bug)
     ("edit" . git-bug-edit-bug)
     ("insert" . git-bug-insert-bugid)
-    ("close". (lambda (bugid) "Close issue." (git-bug-cmd "state close" bugid)))
-    ("open" . (lambda (bugid) "Reopen issue." (git-bug-cmd "state open"  bugid))))
+    ("close". (lambda (bugid) "Close issue." (git-bug-cmd bugid "status close" )))
+    ("open" . (lambda (bugid) "Reopen issue." (git-bug-cmd bugid "status open"))))
  "Bug actions preformed when given a `BUGID`.")
 
 (defun git-bug-menu (&optional bugid action)
