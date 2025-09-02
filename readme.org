@@ -13,6 +13,10 @@ and then add the bug reference to the line, so the outcome of running the functi
 # TODO(gb#abcd123): a commented note for later in the source code
 #+end_src
 
+
+[[file:doc/demo-inline.gif]]
+[[file:doc/demo-menu-close.gif]]
+
 [fn:1] [[https://code.visualstudio.com/blogs/2020/05/06/github-issues-integration#_creating-an-issue-from-anywhere][VS code's github-issue-integration]] also does similiar. Are there other implementations?
 
 ** Highlights
@@ -120,7 +124,7 @@ Putting the issues here for fun. Fun that costs an easily out of date and/or hig
 
 #+begin_src bash :colnames '(date bug title) :exports both
   git-bug bug -s open -f json |
-   jq -r '.[]|[.edit_time.time[0:10], .id[0:7], .title]|@tsv' |
+   jq -r '.[]|[.create_time.time[0:10], .id[0:7], .title]|@tsv' |
    sort -nr
 #+end_src
 
@@ -128,10 +132,9 @@ Putting the issues here for fun. Fun that costs an easily out of date and/or hig
 |       date | bug     | title                                                            |
 |------------+---------+------------------------------------------------------------------|
 | 2025-09-01 | 59e13c7 | git-bug-new-from-line should include file:line when creating     |
-| 2025-09-01 | 3a93c2e | minor-mode for clickable buttons, company/cornfu completion?     |
 | 2025-08-31 | cc5fa60 | refactor new and edit so edit can reuse temp buffer of new       |
 | 2025-08-31 | 7b002ae | need to exit and return when bug is saved. also regexp is wrong? |
 | 2025-08-30 | e7a8b7c | edit message color like commit-message                           |
 | 2025-08-30 | 94e034c | git-bug porcelain for magit-forge                                |
 | 2025-08-30 | 6588bc5 | list of git-bug project directories for overview of all page     |
-| 2025-08-30 | 4ccdfd4 | edit message color like commit-message                           |
+| 2025-08-30 | 3a93c2e | minor-mode for clickable buttons, company/cornfu completion?     |

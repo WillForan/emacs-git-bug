@@ -217,7 +217,6 @@ Abuse `git-bug-editmsg-new` and `git-bug-editmsg-save-and-close` as hidden buffe
 
 
 ;;; TODOs
-;; TODO(gb#e3a1092): record demo
 ;; TODO(gb#e7a8b7c): edit message color like commit-message
 ;; TODO(gb#94e034c): git-bug porcelain for magit-forge
 ;; TODO(gb#6588bc5): list of git-bug project directories for 'overview of all' page
