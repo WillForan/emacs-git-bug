@@ -97,7 +97,8 @@ Give `BUGID` and/or `TITLE` to avoid calling git-bug."
 
 (defun git-bug-edit-bug (bugid)
   "Edit bug `BUGID` in temporary buffer.
-Currently only works well if EDITOR is set to emacsclient and emacs-server is srunning.
+Currently only works well if EDITOR is set to emacsclient and
+emacs-server is running.
 TODO(gb#cc5fa60): refactor new and edit so edit can reuse temp buffer"
   (start-process (format "git-bug-edit:%s" bugid)
                  nil
@@ -139,7 +140,9 @@ Runs e.g. `git-bug bug status open $bugid`."
 
 (defun git-bug-menu (&optional bugid action)
   "Choose a bug and than action each from a list.
-Runs `ACTION` (in `git-bug-menu-actions-alist`) on `BUGID` (`git-bug bug -f json`).
+Runs `ACTION` (in `git-bug-menu-actions-alist`)
+on `BUGID` (`git-bug bug -f json`).
+
 `completing-read` for `BUGID` and/or `ACTION` if not provided."
   (interactive)
   (when (not bugid) (setq bugid (git-bug-completing-read)))
@@ -213,13 +216,14 @@ Returns git-bug id."
 
 (defun git-bug-new-from-line ()
   "Create a bug from TODO/FIX/BUG: on the current line.
-Abuse `git-bug-editmsg-new` and `git-bug-editmsg-save-and-close` as hidden buffers to run git-bug bug new command."
+Abuse `git-bug-editmsg-new` and `git-bug-editmsg-save-and-close`
+as hidden buffers to run git-bug bug new command."
   (interactive)
   (save-excursion
     (move-beginning-of-line 1)
     (search-forward-regexp "TODO:\\|FIX:\\|BUG:\\|HACK:\\|XXX:" (pos-eol) t)
     (let ((label-point (point)))
-      (if (= label-point (point-at-bol))
+      (if (= label-point (line-beginning-position))
           (error "No label like TODO FIX or BUG found"))
       (let* ((bug-title (string-trim (buffer-substring-no-properties label-point (pos-eol))))
              ;; TODO(gb#59e13c7): git-bug-new-from-line should include file:line when creating
