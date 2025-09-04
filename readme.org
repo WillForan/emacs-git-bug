@@ -19,7 +19,7 @@ Good entrypoints and canidates for assigned keybindings are
 
 
 
-Likely the most novel[fn:1] feature is =M-x git-bug-new-from-line=. This function will create a new git-bug from a line like
+A nearly novel[fn:1] feature is =M-x git-bug-new-from-line=. This function will create a new git-bug from a line like
 #+begin_src
 # TODO: a commented note for later in the source code
 #+end_src

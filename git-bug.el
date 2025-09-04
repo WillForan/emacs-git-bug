@@ -143,7 +143,7 @@ Runs `ACTION` (in `git-bug-menu-actions-alist`) on `BUGID` (`git-bug bug -f json
 `completing-read` for `BUGID` and/or `ACTION` if not provided."
   (interactive)
   (when (not bugid) (setq bugid (git-bug-completing-read)))
-  (when (not bugid) (error "failed to select a bug id"))
+  (when (not bugid) (error "Failed to select a bug id"))
   ;; TODO(gb#7b002ae): bug-menu to exit and return when bug is saved. also regexp is wrong?
   ;; (when (not (string-match "^[A-Za-z0-9]{9}$" bugid))
   ;;            (setq bugid (git-bug-editmsg-new bugid)))
@@ -220,7 +220,7 @@ Abuse `git-bug-editmsg-new` and `git-bug-editmsg-save-and-close` as hidden buffe
     (search-forward-regexp "TODO:\\|FIX:\\|BUG:\\|HACK:\\|XXX:" (pos-eol) t)
     (let ((label-point (point)))
       (if (= label-point (point-at-bol))
-          (error "No label like TODO FIX or BUG found."))
+          (error "No label like TODO FIX or BUG found"))
       (let* ((bug-title (string-trim (buffer-substring-no-properties label-point (pos-eol))))
              ;; TODO(gb#59e13c7): git-bug-new-from-line should include file:line when creating
              (bugid
