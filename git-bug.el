@@ -1,26 +1,46 @@
-;;; package --- git-bug -*- lexical-binding: t; -*-
+;;; git-bug.el --- Conviences for git-bug local-first issues -*- lexical-binding: t; -*-
+;; Copyright (C) 2025 Will Foran
+
+;; Author: Will Foran <willforan+emacs@gmail.com>
+;; URL: http://www.github.com/WillForan/emacs-git-bug
+;; Version: 1.0.0
+;; Keywords: tools vc processes
+;; Package-Requires: ((emacs "29.1") )
+
+;; This file is not part of GNU Emacs.
+
 ;;; Commentary:
-;; This file packages shell wrappers and convenience functions for git-bug.
+;; A minimal interface to [[https://github.com/git-bug/][git-bug]] for EMACS.
+;;
+;; This package provides a =completing-read= menu to match existing bugs and another menu to act on a bug.
+;;
+;; Good entrypoints and canidates for assigned keybindings are
+;;   * =git-bug-menu=
+;;   * =git-bug-new-from-line=
+;;
+;; Usage:
+;; (use-package git-bug
+;;   :bind
+;;   ("C-c b m" . git-bug-menu)
+;;   ("C-c b c" . git-bug-new-from-line))
 ;;; Code:
 (defun git-bug-candidates ()
   "Shell out to git-bug.  Formatted id candidates for `ivy-read`."
   (let* ((cmd-bug-list-jq-tsv "git-bug bug -f json | jq -r '.[]|[.id,.edit_time.time,.author.name,.status,.title]|@tsv'|sort -k2,2nr")
          (res (shell-command-to-string cmd-bug-list-jq-tsv))
-         (bugs (split-string res "\n" t))
-         )
-      (seq-map (lambda (line)
-                 (let* ((fields (split-string line "\t"))
-                        (id (nth 0 fields))
-                        (date (nth 1 fields))
-                        (status (nth 3 fields))
-                        (title (nth 4 fields))
-                        )
-                   (propertize (format "%.7s %.10s %s" id date (string-join (nthcdr 2 fields) "\t"))
-                               'bug-id id
-                               'bug-status status
-                               'bug-date date
-                               'bug-title title)))
-                 bugs)))
+         (bugs (split-string res "\n" t)))
+    (seq-map (lambda (line)
+               (let* ((fields (split-string line "\t"))
+                      (id (nth 0 fields))
+                      (date (nth 1 fields))
+                      (status (nth 3 fields))
+                      (title (nth 4 fields)))
+                 (propertize (format "%.7s %.10s %s" id date (string-join (nthcdr 2 fields) "\t"))
+                             'bug-id id
+                             'bug-status status
+                             'bug-date date
+                             'bug-title title)))
+             bugs)))
 
 (defun git-bug-extract-id-in-text ()
   "Find gb# on current line.  Search should match output of `git-bug-insert-bugid`."
@@ -34,13 +54,13 @@
 (defun git-bug-completing-read ()
   "Completing-read for git-bug."
   (let ((init-input (git-bug-extract-id-in-text)))
-    (when-let (selection (completing-read "bug:" (git-bug-candidates) nil nil init-input nil))
+    (when-let* ((selection (completing-read "bug:" (git-bug-candidates) nil nil init-input nil)))
       ;; NB. splitting on space as saved from `git-bug-completing-read` vs tab from command output.
-      (car (split-string selection " ")) ;; returns just the bug id.
+      (car (split-string selection " "))))) ;; returns just the bug id.
 
       ;; completing-read does not return object with text properties?
       ;; (setq bugid (get-text-property 0 'bug-id selection))
-      )))
+
 
 (defun git-bug-insert-bugid (&optional bugid title)
   "Insert gb# issue number at current position in buffer.
@@ -63,7 +83,7 @@ Give `BUGID` and/or `TITLE` to avoid calling git-bug."
     (org-mode)))
 
 (defun git-bug-show-bug (&optional bugid)
-  "Create a new buffer to show this `bugid`'s title and it's comments."
+  "Create a new buffer to show this `BUGID`'s title and it's comments."
   (interactive "P")
   (when (not bugid) (setq bugid (git-bug-completing-read)))
   (with-current-buffer (get-buffer-create (format "gb#%s" bugid))
@@ -94,7 +114,7 @@ Like `git-bug-edit-bug` creates a new process that works best if
 (defun git-bug-edit-at-line ()
   "Edit first match of gb#1234567 on the current line."
   (interactive)
-  (if-let
+  (if-let*
       ((bugid (git-bug-extract-id-in-text)))
       (git-bug-edit-bug bugid)
     (error "No bug like gh#1234567 on line")))
@@ -212,8 +232,7 @@ Abuse `git-bug-editmsg-new` and `git-bug-editmsg-save-and-close` as hidden buffe
         ;; final output looks like 'TODO(gb#1234567): title of bug/issue'
         (insert "(")
         (git-bug-insert-bugid bugid)
-        (insert ")")
-        ))))
+        (insert ")")))))
 
 
 ;;; TODOs
@@ -222,5 +241,5 @@ Abuse `git-bug-editmsg-new` and `git-bug-editmsg-save-and-close` as hidden buffe
 ;; TODO(gb#6588bc5): list of git-bug project directories for 'overview of all' page
 ;; TODO(gb#3a93c2e): minor-mode for clickable buttons, company/cornfu completion?
 
-(provide git-bug)
-;; git-bug.el ends here
+(provide 'git-bug)
+;;; git-bug.el ends here

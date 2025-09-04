@@ -1,8 +1,23 @@
 #+OPTIONS: toc:nil
 * git-bug elisp functions for emacs
-A minimal interface to [[https://github.com/git-bug/][git-bug]] for emacs.
+#+begin_src elisp :exports results :results drawer
+;; get the description from commentary. But we'll have our own usage below. So kill everything after that.
+(replace-regexp-in-string "Usage:[[:ascii:][:nonascii:]]*" "" (lm-commentary "git-bug.el"))
+#+end_src
+
+#+RESULTS:
+:results:
+A minimal interface to [[https://github.com/git-bug/][git-bug]] for EMACS.
 
 This package provides a =completing-read= menu to match existing bugs and another menu to act on a bug.
+
+Good entrypoints and canidates for assigned keybindings are
+  * =git-bug-menu=
+  * =git-bug-new-from-line=
+
+:end:
+
+
 
 Likely the most novel[fn:1] feature is =M-x git-bug-new-from-line=. This function will create a new git-bug from a line like
 #+begin_src
