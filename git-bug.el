@@ -6,13 +6,15 @@
 ;; Version: 1.0.0
 ;; Keywords: tools vc processes
 ;; Package-Requires: ((emacs "29.1") )
+;; SPDX-License-Identifier: GPL-3.0-or-later
 
 ;; This file is not part of GNU Emacs.
 
 ;;; Commentary:
 ;; A minimal interface to [[https://github.com/git-bug/][git-bug]] for EMACS.
 ;;
-;; This package provides a =completing-read= menu to match existing bugs and another menu to act on a bug.
+;; This package provides a =completing-read= menu to match existing bugs
+;; and another menu to act on a bug.
 ;;
 ;; Good entrypoints and canidates for assigned keybindings are
 ;;   * =git-bug-menu=
