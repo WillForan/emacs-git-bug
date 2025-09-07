@@ -166,7 +166,7 @@ on `BUGID` (`git-bug bug -f json`).
             (define-key map (kbd "C-c C-c") #'git-bug-editmsg-save-and-close)
             (define-key map (kbd "C-c C-k") #'git-bug-editmsg-close)
             map)
-  :lighter "GBug")
+  :lighter " GBug")
 
 (defun git-bug-editmsg-close (&optional no-kill)
   "Close edit buffer and remove the underlining file without save questions.
