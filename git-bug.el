@@ -44,14 +44,18 @@
                              'bug-title title)))
              bugs)))
 
-(defun git-bug-extract-id-in-text ()
-  "Find gb# on current line.  Search should match output of `git-bug-insert-bugid`."
+(defun git-bug-extract-id-in-text (&optional bug-prefix)
+  "Find BUG-PREFIX (default 'gb#') on current line.
+Search should match output of `git-bug-insert-bugid`.
+BUG-PREFIX for git-bug is 'gb#' by local convention but could be anything.
+For radicle, 'rad' command outputs 'rad:' so that prefix is reused."
   ;; TODO: be smarter. maybe search in both directions?
-  ;; TODO: make 'gb#' prefix a package customize variable
-  (save-excursion
-           (move-beginning-of-line 1)
-           (search-forward "gb#" (pos-eol) t)
-           (thing-at-point 'word t)))
+  (let
+      ((bug-prefix (if bug-prefix bug-prefix "gb#")))
+    (save-excursion
+      (move-beginning-of-line 1)
+      (search-forward "gb#" (pos-eol) t)
+      (thing-at-point 'word t))))
 
 (defun git-bug-completing-read ()
   "Completing-read for git-bug."
@@ -246,6 +250,87 @@ as hidden buffers to run git-bug bug new command."
 ;; TODO(gb#94e034c): git-bug porcelain for magit-forge
 ;; TODO(gb#6588bc5): list of git-bug project directories for 'overview of all' page
 ;; TODO(gb#3a93c2e): minor-mode for clickable buttons, company/cornfu completion?
+
+;;; Radicle
+;;  $(rad self --home)/node/node.db
+(defvar  git-bug-rad-issues-query
+  "attach '%s' as nodes;
+  with comments as (
+   select issues.id iid, repo,
+       json_extract(issue, '$.title') title,
+       json_extract(issue,'$.state.status') status, cmt.*
+   from issues, json_tree(json_extract(issue,'$.thread.comments')) as cmt
+), authors as (
+   select iid, value as author, nodes.alias
+   from comments join nodes on author = nodes.id
+   where key like 'author'
+), tstamp as (select iid, value as tstamp from comments where key like 'timestamp'
+), authstamp as (
+   select tstamp.iid, authors.alias, tstamp
+   from authors join tstamp on tstamp.iid == authors.iid
+), firstcomment as (select * from authstamp group by iid having tstamp == min(tstamp)
+), c1 as (select distinct repo, iid, title, status from comments)
+ select repo, fc.iid, status, alias, datetime(tstamp/1000) as tstamp, title
+  from firstcomment fc
+  join c1 on fc.iid=c1.iid
+  where repo like '%s'
+  order by tstamp desc"
+  "Query format for issues for format.
+Two free parameters:
+1. location of nodes.db and
+2. repo id like 'rad:z3gqcJUoA1n9HaHKufZs5FCSGazv5' or '%'.")
+
+(defun git-bug-rad-issues (&optional home repo)
+  "List issues tracked in rad's COB.
+Look in the install's `HOME` (default `rad self --home`) folder
+for `REPO` (default `rad .`."
+  (let* ((home (if home home
+                 (car (process-lines "rad" "self" "--home"))))
+         (nodedb (file-name-concat home "node/node.db"))
+         (cobdb (file-name-concat home "cobs/cache.db"))
+         (repo (if repo repo
+                 (car (process-lines "rad" "."))))
+         (qry (format git-bug-rad-issues-query nodedb repo)))
+
+    (when (not (file-exists-p nodedb)) (error "Missing node db '%s'" nodedb))
+    (when (not (file-exists-p cobdb)) (error "Missing cob db '%s'" cobdb))
+    (seq-map (lambda (line)
+              (split-string line "" line))
+             (process-lines "sqlite3" "-separator" "" cobdb qry))))
+
+(defun git-bug-rad-read ()
+  "Completing-read for radicle issues.
+Mirror of git-bug-completing-read but git-bug-rad-issues does not emit fontified string."
+  (let ((init-input (git-bug-extract-id-in-text "rad:")))
+    (when-let* ((selection (completing-read "bug:" (git-bug-rad-issues) nil nil init-input nil)))
+      (car (split-string selection " "))))) ;; returns just the bug id.
+
+(defvar git-bug-rad-menu-actions-alist
+  '(("show"   . (lambda (bugid) "Rad show."    (error "Not implemented yet")))
+    ("edit"   . (lambda (bugid) "Rad edit."    (error "Not implemented yet")))
+    ("insert" . (lambda (bugid) "Rad Ins."     (error "Not implemented yet")))
+    ("close"  . (lambda (bugid) "Rad Close."   (error "Not implemented yet")))
+    ("comment". (lambda (bugid) "Rad comment." (error "Not implemented yet")))
+    ("open"   . (lambda (bugid) "Rad Reopen."  (error "Not implemented yet"))))
+ "Bug actions preformed when given a radicle `BUGID`.")
+
+(defun git-bug-generic-menu (bug-read-func menu-alist &optional bugid action)
+  "Choose a bug and than action each from a list.
+Use `BUG-READ-FUNC` to find `BUGID` and `MENU-ALIST` for picking `ACTION`
+Runs `ACTION` on `BUGID`.  See `git-bug-rad-issues`.
+
+`completing-read` for `BUGID` and/or `ACTION` if not provided."
+  (when (not bugid) (setq bugid (git-bug-rad-read)))
+  (when (not bugid) (error "Failed to select a bug id"))
+  (when (not action)
+    (setq action (cdr (assoc
+                       (completing-read "Action:" menu-alist) menu-alist))))
+  (funcall action bugid))
+(defun git-bug-rad-menu ()
+  "Interactive menu to read."
+  (interactive)
+  (git-bug-generic-menu git-bug-rad-read git-bug-rad-menu-actions)
+  )
 
 (provide 'git-bug)
 ;;; git-bug.el ends here

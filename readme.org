@@ -153,3 +153,33 @@ Putting the issues here for fun. Fun that costs an easily out of date and/or hig
 | 2025-08-30 | 94e034c | git-bug porcelain for magit-forge                                |
 | 2025-08-30 | 6588bc5 | list of git-bug project directories for overview of all page     |
 | 2025-08-30 | 3a93c2e | minor-mode for clickable buttons, company/cornfu completion?     |
+
+
+* Radi
+#+begin_src bash
+  sqlite3 $(rad self --home)/cobs/cache.db \
+  "attach '$(rad self --home)/node/node.db' as nodes;
+  with comments as (
+   select issues.id iid, repo,
+       json_extract(issue, '$.title') title,
+       json_extract(issue,'$.state.status') status, cmt.*
+   from issues, json_tree(json_extract(issue,'$.thread.comments')) as cmt
+), authors as (
+   select iid, value as author, nodes.alias
+   from comments join nodes on author = nodes.id
+   where key like 'author'
+), tstamp as (select iid, value as tstamp from comments where key like 'timestamp'
+), authstamp as (
+   select tstamp.iid, authors.alias, tstamp
+   from authors join tstamp on tstamp.iid == authors.iid
+), firstcomment as (select * from authstamp group by iid having tstamp == min(tstamp)
+), c1 as (select distinct repo, iid, title, status from comments)
+ select repo, fc.iid, status, alias, datetime(tstamp/1000) as tstamp, title
+  from firstcomment fc
+  join c1 on fc.iid=c1.iid
+  where repo like '%s'
+  order by tstamp desc
+"
+#+end_src
+
+#+RESULTS:
