@@ -91,9 +91,11 @@ Give `BUGID` and/or `TITLE` to avoid calling git-bug."
   (with-current-buffer (get-buffer-create (format "gb#%s" bugid))
     (erase-buffer)
     (insert (shell-command-to-string
-             (format "git-bug bug title \"%s\"" bugid)))
+             (format "git-bug bug title %s"
+                     (shell-quote-argument bugid))))
     (insert (shell-command-to-string
-             (format "git-bug bug comment \"%s\"" bugid)))
+             (format "git-bug bug comment %s"
+                     (shell-quote-argument bugid))))
     (goto-char (point-min))
     (pop-to-buffer (current-buffer))))
 
