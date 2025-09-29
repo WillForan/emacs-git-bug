@@ -56,7 +56,7 @@
 (defun git-bug-completing-read ()
   "Completing-read for git-bug."
   (let ((init-input (git-bug-extract-id-in-text)))
-    (when-let* ((selection (completing-read "bug:" (git-bug-candidates) nil nil init-input nil)))
+    (when-let* ((selection (completing-read "bug: " (git-bug-candidates) nil nil init-input nil)))
       ;; NB. splitting on space as saved from `git-bug-completing-read` vs tab from command output.
       (car (split-string selection " "))))) ;; returns just the bug id.
 
@@ -156,7 +156,7 @@ on `BUGID` (`git-bug bug -f json`).
   ;;            (setq bugid (git-bug-editmsg-new bugid)))
   (when (not action)
     (setq action (cdr (assoc
-                       (completing-read "Action:" git-bug-menu-actions-alist)
+                       (completing-read "Action: " git-bug-menu-actions-alist)
                        git-bug-menu-actions-alist))))
 
   (funcall action bugid))
