@@ -1,5 +1,7 @@
 #+OPTIONS: toc:nil
 * git-bug elisp functions for emacs
+[[https://melpa.org/#/git-bug][file:https://melpa.org/packages/git-bug-badge.svg]]
+
 #+begin_src elisp :exports results :results drawer
 ;; get the description from commentary. But we'll have our own usage below. So kill everything after that.
 (require 'dash)
@@ -88,7 +90,8 @@ From  ~git-bug-menu-actions-alist~
 Here's an example install and configure for =~/.emacs.d/init.el= using =use-package-vc-install= (Emacs 30)
 #+begin_src elisp :eval never
 (use-package git-bug
-  :vc (:url "https://github.com/WillForan/emacs-git-bug")
+  ;; in MELPA, for directly from git, use
+  ; :vc (:url "https://github.com/WillForan/emacs-git-bug")
   :ensure t
   :bind
   ("C-c b m" . git-bug-menu)
