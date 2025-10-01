@@ -1,4 +1,4 @@
-;;; git-bug.el --- Conviences for git-bug local-first issues -*- lexical-binding: t; -*-
+;;; git-bug.el --- Conveniences for local-first issues with git-bug  -*- lexical-binding: t; -*-
 ;; Copyright (C) 2025 Will Foran
 
 ;; Author: Will Foran <willforan+emacs@gmail.com>
@@ -11,7 +11,7 @@
 ;; This file is not part of GNU Emacs.
 
 ;;; Commentary:
-;; A minimal interface to [[https://github.com/git-bug/][git-bug]] for EMACS.
+;; A minimal interface to git-bug (https://github.com/git-bug/).
 ;;
 ;; This package provides a =completing-read= menu to match existing bugs
 ;; and another menu to act on a bug.

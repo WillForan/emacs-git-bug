@@ -2,14 +2,21 @@
 * git-bug elisp functions for emacs
 #+begin_src elisp :exports results :results drawer
 ;; get the description from commentary. But we'll have our own usage below. So kill everything after that.
-(replace-regexp-in-string "Usage:[[:ascii:][:nonascii:]]*" "" (lm-commentary "git-bug.el"))
+(require 'dash)
+(->> (lm-commentary "git-bug.el")
+     ; remove "Usage:" and after
+     (replace-regexp-in-string "Usage:[[:ascii:][:nonascii:]]*" "" )
+     ; link to org-mode
+     (replace-regexp-in-string "git-bug (\\(http[^)]*\\))" "[[\\1][git-bug]] for Emacs"))
+
 #+end_src
 
 #+RESULTS:
 :results:
-A minimal interface to [[https://github.com/git-bug/][git-bug]] for EMACS.
+A minimal interface to [[https://github.com/git-bug/][git-bug]] for Emacs.
 
-This package provides a =completing-read= menu to match existing bugs and another menu to act on a bug.
+This package provides a =completing-read= menu to match existing bugs
+and another menu to act on a bug.
 
 Good entrypoints and canidates for assigned keybindings are
   * =git-bug-menu=
