@@ -1,9 +1,9 @@
-;;; git-bug.el --- Conveniences for local-first issues with git-bug  -*- lexical-binding: t; -*-
+;;; git-bug.el --- Conveniences for local-first issues with git-bug/radicle  -*- lexical-binding: t; -*-
 ;; Copyright (C) 2025 Will Foran
 
 ;; Author: Will Foran <willforan+emacs@gmail.com>
 ;; URL: http://www.github.com/WillForan/emacs-git-bug
-;; Version: 1.0.0
+;; Version: 1.1.0
 ;; Keywords: tools vc processes
 ;; Package-Requires: ((emacs "29.1") )
 ;; SPDX-License-Identifier: GPL-3.0-or-later
@@ -11,13 +11,13 @@
 ;; This file is not part of GNU Emacs.
 
 ;;; Commentary:
-;; A minimal interface to git-bug (https://github.com/git-bug/).
+;; A minimal interface to git-bug (https://github.com/git-bug/) and radicle.
 ;;
 ;; This package provides a =completing-read= menu to match existing bugs
 ;; and another menu to act on a bug.
 ;;
 ;; Good entrypoints and canidates for assigned keybindings are
-;;   * =git-bug-menu=
+;;   * =git-bug-menu=          or =git-bug-rad-menu=
 ;;   * =git-bug-new-from-line=
 ;;
 ;; Usage:
@@ -277,10 +277,10 @@ as hidden buffers to run git-bug bug new command."
   join c1 on fc.iid=c1.iid
   where repo like '%s'
   order by tstamp desc"
-  "Query format for issues for format.
+  "Query format to collect issues.  Run on cobs/cache.db by `git-bug-rad-issues'.
 Two free parameters:
-1. location of nodes.db and
-2. repo id like 'rad:z3gqcJUoA1n9HaHKufZs5FCSGazv5' or '%'.")
+1. location of node/nodes.db and
+2. repo id like `rad:z3gqcJUoA1n9HaHKufZs5FCSGazv5' or `%'.")
 
 (defun git-bug-rad-issues (&optional home repo)
   "List issues tracked in rad's COB.
@@ -302,7 +302,8 @@ for `REPO` (default `rad .`."
 
 (defun git-bug-rad-read ()
   "Completing-read for radicle issues.
-Mirror of git-bug-completing-read but git-bug-rad-issues does not emit fontified string."
+Mirror of git-bug-completing-read but git-bug-rad-issues
+does not emit fontified string."
   (let ((init-input (git-bug-extract-id-in-text "rad:")))
     (when-let* ((selection (completing-read "bug:" (git-bug-rad-issues) nil nil init-input nil)))
       (car (split-string selection " "))))) ;; returns just the bug id.
@@ -331,8 +332,7 @@ Runs `ACTION` on `BUGID`.  See `git-bug-rad-issues`.
 (defun git-bug-rad-menu ()
   "Interactive menu to read."
   (interactive)
-  (git-bug-generic-menu git-bug-rad-read git-bug-rad-menu-actions)
-  )
+  (git-bug-generic-menu #'git-bug-rad-read git-bug-rad-menu-actions-alist))
 
 (provide 'git-bug)
 ;;; git-bug.el ends here
